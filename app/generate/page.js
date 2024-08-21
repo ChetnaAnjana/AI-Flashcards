@@ -1,9 +1,9 @@
 "use client";
 //  generating flashcard
+import { db } from "@/firebase";
 import { useUser } from "@clerk/nextjs";
-import Dialog from "@mui/material/Dialog";
-
 import {
+  Card,
   CardActionArea,
   CardContent,
   Container,
@@ -11,37 +11,45 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  Grid,
   Paper,
   TextField,
   Typography,
 } from "@mui/material";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Dialog from "@mui/material/Dialog";
+import { collection, doc, getDoc, writeBatch } from "firebase/firestore";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 export default function Generate() {
   const { isLoaded, isSignedIn, user } = useUser();
   const [flashcards, setFlashcards] = useState([]);
-  const [flipped, setFlipped] = useState([]);
-  const [text, setText] = useState([]);
-  const [name, setName] = useState([]);
+  const [flipped, setFlipped] = useState({}); // [] instead of {}
+  const [text, setText] = useState("");
+  const [name, setName] = useState("");
   const [open, setOpen] = useState(false);
   const router = useRouter();
 
+  // submit our text to generate flashcard this will be send to our api.
   const handleSubmit = async () => {
     fetch("api/generate", {
       method: "POST",
       body: text,
     })
       .then((res) => res.json())
-      .then((data) => setFlashcards(data));
+      .then((data) => {
+        setFlashcards(data);
+        //setFlipped({}); // Reset flipped state when new flashcards are generated
+      });
   };
 
   const handleCardClick = (id) => {
+    // we have an id for every card.
     setFlipped((prev) => ({
-      ...prev,
-      [id]: !prev[id],
+      ...prev, // we keep all the card as same
+      [id]: !prev[id], // set opposite of the prev one just one card
     }));
   };
 
@@ -58,6 +66,7 @@ export default function Generate() {
       alert("please enter a name");
       return;
     }
+
     const batch = writeBatch(db);
     const userDocRef = doc(collection(db, "users"), user.id);
     const docSnap = await getDoc(userDocRef);
@@ -74,11 +83,13 @@ export default function Generate() {
     } else {
       batch.set(userDocRef, { flashcards: [{ name }] });
     }
+
     const colRef = collection(userDocRef, name);
     flashcards.forEach((flashcard) => {
-      const cardDocREf = doc(colRef); ///// error possibility
+      const cardDocRef = doc(colRef);
       batch.set(cardDocRef, flashcard);
     });
+
     await batch.commit();
     handleClose();
     router.push("/flashcards");
@@ -115,7 +126,6 @@ export default function Generate() {
             onClick={handleSubmit}
             fullWidth
           >
-            {" "}
             Submit
           </Button>
         </Paper>
@@ -123,7 +133,7 @@ export default function Generate() {
       {flashcards.length > 0 && (
         <Box sx={{ mt: 4 }}>
           <Typography variant="h5">Flashcards Preview</Typography>
-          <Grid Container spacing={3}>
+          <Grid container spacing={3}>
             {flashcards.map((flashcard, index) => (
               <Grid item xs={12} sm={6} md={4} key={index}>
                 <Card>
@@ -137,17 +147,17 @@ export default function Generate() {
                         sx={{
                           perspective: "1000px",
                           "& > div": {
-                            transition: "transforn 8.6s",
+                            transition: "transform 0.6s",
                             transformStyle: "preserve-3d",
                             position: "relative",
                             width: "100%",
                             height: "200px",
-                            boxShadow: "0 4px 8px 8 rgba(0,0,0, 0.2)",
+                            boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)",
                             transform: flipped[index]
                               ? "rotateY(180deg)"
                               : "rotateY(0deg)",
                           },
-                          "& >div >div": {
+                          "& > div > div": {
                             position: "absolute",
                             width: "100%",
                             height: "100%",
@@ -158,12 +168,24 @@ export default function Generate() {
                             padding: 2,
                             boxSizing: "border-box",
                           },
-                          "& > div > div:nth-of-type(2) ": {
+                          "& > div > div:nth-of-type(2)": {
                             transform: "rotateY(180deg)",
                           },
                         }}
                       >
                         <div>
+                          {/* <div>
+                            <Typography variant="h5" component="div">
+                              {flipped[index]
+                                ? flashcard.back
+                                : flashcard.front}
+                            </Typography>
+                          </div> */}
+                          <div>
+                            <Typography variant="h5" component="div">
+                              {flashcard.front}
+                            </Typography>
+                          </div>
                           <div>
                             <Typography variant="h5" component="div">
                               {flashcard.back}
@@ -177,6 +199,7 @@ export default function Generate() {
               </Grid>
             ))}
           </Grid>
+
           <Box
             sx={{
               mt: 4,
@@ -194,7 +217,7 @@ export default function Generate() {
         <DialogTitle>Save Flashcards</DialogTitle>
         <DialogContent>
           <DialogContentText>
-            Please enter a name for your flascards collection.
+            Please enter a name for your flashcards collection.
           </DialogContentText>
           <TextField
             autoFocus
@@ -208,8 +231,8 @@ export default function Generate() {
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}> Cancel</Button>
-          <Button onClick={saveFlashcards}> Save</Button>
+          <Button onClick={handleClose}>Cancel</Button>
+          <Button onClick={saveFlashcards}>Save</Button>
         </DialogActions>
       </Dialog>
     </Container>
