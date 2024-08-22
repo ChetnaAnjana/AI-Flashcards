@@ -140,7 +140,7 @@ export default function Home() {
                 Basic
               </Typography>
               <Typography variant="h5" gutterBottom>
-                $5/ month
+                Free
               </Typography>
               <Typography>
                 {" "}
@@ -152,6 +152,7 @@ export default function Home() {
                 sx={{
                   mt: 2,
                 }}
+                href="/sign-in"
               >
                 choose basic
               </Button>
