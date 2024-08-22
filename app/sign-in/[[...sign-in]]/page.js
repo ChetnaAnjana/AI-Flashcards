@@ -38,9 +38,9 @@ export default function SignUpPage() {
         alignItems="center"
         justifyContent="center"
       >
-        <Typography variant="h4" gutterBottom>
+        {/* <Typography variant="h4" gutterBottom>
           Sign In
-        </Typography>
+        </Typography> */}
         <SignIn />
       </Box>
     </Container>
