@@ -1,7 +1,9 @@
 "use client";
 import getStripe from "@/utils/get-stripe";
 import { SignedIn, SignedOut, UserButton } from "@clerk/nextjs";
-import { Toolbar, Typography } from "@mui/material";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import LinkedInIcon from "@mui/icons-material/LinkedIn";
+import { IconButton, Toolbar, Typography } from "@mui/material";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -42,6 +44,9 @@ export default function Home() {
           <Typography variant="h6" style={{ flexGrow: 1 }}>
             Flashcard SaaS
           </Typography>
+          <Button color="inherit" href="/">
+            Home Page
+          </Button>
           <SignedOut>
             <Button color="inherit" href="/sign-in">
               Login
@@ -188,6 +193,56 @@ export default function Home() {
                 choose pro
               </Button>
             </Box>
+          </Grid>
+        </Grid>
+      </Box>
+
+      <Box
+        sx={{
+          mt: 8,
+          py: 4,
+          backgroundColor: "primary.main",
+          color: "white",
+          textAlign: "center",
+        }}
+      >
+        <Grid container spacing={4}>
+          <Grid item xs={12} md={4}>
+            <Typography variant="h6" gutterBottom>
+              Flashcard SaaS
+            </Typography>
+            <Typography>
+              {" "}
+              Empowering Learning through smart flashcards.
+            </Typography>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Typography variant="h6" gutterBottom>
+              Contact Us
+            </Typography>
+            <Typography>Email: chetnaanjana02@gmail.com</Typography>
+            <Typography>Phone: 470-815-6785</Typography>
+          </Grid>
+          <Grid item xs={12} md={4}>
+            <Typography variant="h6" gutterBottom>
+              Connect With Us
+            </Typography>
+            <IconButton
+              color="inherit"
+              href="https://github.com/ChetnaAnjana"
+              target="_blank"
+              rel="noopener"
+            >
+              <GitHubIcon />
+            </IconButton>
+            <IconButton
+              color="inherit"
+              href="https://www.linkedin.com/in/chetna-anjana-695932206/"
+              target="_blank"
+              rel="noopener"
+            >
+              <LinkedInIcon />
+            </IconButton>
           </Grid>
         </Grid>
       </Box>
