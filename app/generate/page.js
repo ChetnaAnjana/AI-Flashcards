@@ -211,13 +211,6 @@ export default function Generate() {
                           }}
                         >
                           <div>
-                            {/* <div>
-                            <Typography variant="h5" component="div">
-                              {flipped[index]
-                                ? flashcard.back
-                                : flashcard.front}
-                            </Typography>
-                          </div> */}
                             <div>
                               <Typography variant="h5" component="div">
                                 {flashcard.front}
