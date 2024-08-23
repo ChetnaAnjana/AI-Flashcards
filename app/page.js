@@ -176,7 +176,7 @@ export default function Home() {
                 Pro
               </Typography>
               <Typography variant="h5" gutterBottom>
-                $10/ month
+                $5/ month
               </Typography>
               <Typography>
                 {" "}
