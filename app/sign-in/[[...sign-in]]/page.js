@@ -1,6 +1,4 @@
 import { SignIn } from "@clerk/nextjs";
-import Link from "next/link";
-
 import {
   AppBar,
   Box,
@@ -9,6 +7,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
+import Link from "next/link";
 
 export default function SignUpPage() {
   return (
