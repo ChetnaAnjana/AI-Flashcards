@@ -26,24 +26,37 @@ export default function Flashcard() {
 
   useEffect(() => {
     async function getFlashcard() {
-      if (!search || !user) return;
+      try {
+        if (!search || !user) return;
 
-      const colRef = collection(doc(collection(db, "users"), user.id), search);
-      const docs = await getDocs(colRef); // this will get all the document in that collection referance
-      const flashcards = [];
+        const colRef = collection(
+          doc(collection(db, "users"), user.id),
+          search
+        );
+        const docs = await getDocs(colRef);
 
-      docs.forEach((doc) => {
-        flashcards.push({ id: doc.id, ...doc.data() });
-      });
-      setFlashcards(flashcards);
+        console.log(`Documents fetched: ${docs.size}`);
+        if (docs.empty) {
+          console.log("No documents found in the collection.");
+        }
+
+        const flashcards = [];
+        docs.forEach((doc) => {
+          flashcards.push({ id: doc.id, ...doc.data() });
+        });
+        setFlashcards(flashcards);
+      } catch (error) {
+        console.error("Error fetching flashcards:", error);
+      }
     }
     getFlashcard();
   }, [user, search]);
 
   const handleCardClick = (id) => {
+    // we have an id for every card.
     setFlipped((prev) => ({
-      ...prev,
-      [id]: !prev[id],
+      ...prev, // we keep all the card as same
+      [id]: !prev[id], // set opposite of the prev one just one card
     }));
   };
 
@@ -97,7 +110,7 @@ export default function Flashcard() {
                           width: "100%",
                           height: "200px",
                           boxShadow: "0 4px 8px 0 rgba(0, 0, 0, 0.2)",
-                          transform: flipped[flashcard.id]
+                          transform: flipped[index]
                             ? "rotateY(180deg)"
                             : "rotateY(0deg)",
                         },
